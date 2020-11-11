@@ -21,5 +21,12 @@
             android:layout_height="wrap_content"
             android:onClick="connDb"
             android:text="Prueba conn" />
+
+        <Button
+            android:id="@+id/sysoConn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sysoConn"
+            android:text="SYSO CONN" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
