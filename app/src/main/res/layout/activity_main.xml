@@ -16,17 +16,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/pruebaConn"
+            android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="connDb"
-            android:text="Prueba conn" />
+            android:onClick="execAsyncTask"
+            android:text="Exec AsyncTask" />
 
-        <Button
-            android:id="@+id/sysoConn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="sysoConn"
-            android:text="SYSO CONN" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,28 +11,28 @@ import java.sql.Connection;
 import connSqlServer.ConnSqlServer;
 
 public class MainActivity extends AppCompatActivity {
+    //Attribs
+    protected String server = "10.0.2.2";
+    protected String port = "1433";
+    protected String db = "PruebaAndroid";
+    protected String instance = "JHERRERO-P\\JAVISQL";
+    protected String user = "admin";
+    protected String passwd = "Admin1234";
+    protected String SqlServerConnUrl = "jdbc:jtds:sqlserver://"+this.server+":"+this.port+";databaseName="+this.db+";instance="+this.instance+";user="+this.user+";password="+this.passwd+"";
 
-    protected Connection conn;
+
+    //AsyncTask de
+    //ConnSqlServer admin = new ConnSqlServer(this.SqlServerConnUrl);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //AsyncTask de
-        ConnSqlServer admin = new ConnSqlServer("10.0.2.2" , "1433" , "PruebaAndroid" , "JHERRERO-P\\JAVISQL" ,  "admin" , "Admin1234");
-        admin.execute();
+
     }
 
-    public void sysoConn(View view){
-        System.out.println("Hola2: " + conn);
-    }
-
-    public void connDb(View view){
-        try {
-            conn.close();
-        }catch (Exception e){
-            Log.e("Error en cierre de connexión a BD: " , ""+e);
-        }
+    public void execAsyncTask(View view){
+        new ConnSqlServer(this.SqlServerConnUrl).execute();
     }
 }

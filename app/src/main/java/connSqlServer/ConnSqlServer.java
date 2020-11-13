@@ -3,71 +3,70 @@ package connSqlServer;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.reto1android.MainActivity;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class ConnSqlServer extends AsyncTask<Integer , Integer , Connection> {
-    //Attribs
-    protected  String server;
-    protected  String port;
-    protected  String db;
-    protected  String instance;
-    protected  String user;
-    protected  String passwd;
-    protected  String connUrl;
-    protected  Connection conn;
+public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
+    //Attributes
+    protected String connUrl;
+    protected Connection conn;
 
-    //Getters & Setters
-    public Connection getConn(){
-        return this.conn;
+    //Overrided Methods
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        this.openConn();
+    }
+    @Override
+    protected String doInBackground(Integer... integers) {
+        return "2";
+    }
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        this.closeConn();
     }
 
     //Methods
-    @Override
-    protected Connection doInBackground(Integer... integers) {
-        this.conn = this.connDb();
-        return this.conn;
-    }
+    //Conecxión a la DB
+    public void openConn(){
+        if(this.conn != null){
+            try{
+                this.conn.close();
+            }catch(Exception e){
+                Log.e("Error al cerrar conexion con BD anterior: " , ""+e);
+            }
+        }
+        this.conn = null;
 
-    @Override
-    protected void onPostExecute(Connection s) {
-        super.onPostExecute(s);
-    }
-
-    public Connection connDb(){
-        System.out.println("Conectando a la BD ....");
+        System.out.println("Conectando con DB ....");
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         try {
             Class.forName("net.sourceforge.jtds.jdbc.Driver").newInstance();
-            //old: "jdbc:jtds:sqlserver://127.0.0.1:1433/PruebaAndroid;instance=JAVISQL;user=admin;password=Admin1234" //10.0.2.2
-            //String url  = "jdbc:jtds:sqlserver://"+_server+":"+_port+";databaseName="+_db+";instance="+_instance+";user="+_user+";password="+_passwd+";";
-            System.out.println(this.connUrl);
-            Connection conn = DriverManager.getConnection(this.connUrl);
+            this.conn = DriverManager.getConnection(this.connUrl);
             System.out.println("Conexión establecida.");
-            return conn;
         }catch (Exception e){
-            Log.e("Error al intentar conectar con SQL Server -> ", ""+e);
-            System.out.println("No se ha establecido conexión con la BD.");
+            Log.e("Error a la hora de establecer conexión: ", ""+e);
         }
-        return null;
+    }
+    //Cerrar conn a la DB
+    public void closeConn(){
+        try{
+            this.conn.close();
+            this.conn = null;
+            System.out.println("Conexión cerrada exitosamente.");
+        }catch(Exception e){
+            Log.e("Error en cerrar conn a SQL Server: " , e.getMessage());
+        }
     }
 
-    //Constructores
-    public ConnSqlServer(String _server , String _port , String _db , String _instance , String _user , String _passwd){
-        this.server = _server;
-        this.port = _port;
-        this.db = _db;
-        this.instance = _instance;
-        this.user = _user;
-        this.passwd = _passwd;
-        this.connUrl = "jdbc:jtds:sqlserver://"+_server+":"+_port+";databaseName="+_db+";instance="+_instance+";user="+_user+";password="+_passwd+";";
+    //Constructors
+    public ConnSqlServer(String _connUrl){
+        this.connUrl = _connUrl;
         this.conn = null;
     }
 }
