@@ -6,11 +6,15 @@ import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
     //Attributes
     protected String connUrl;
     protected Connection conn;
+    protected int tipo;
+    protected String sql;
 
     //Overrided Methods
     @Override
@@ -20,12 +24,13 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
     }
     @Override
     protected String doInBackground(Integer... integers) {
+        //this.execSelect();
         return "2";
     }
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        this.closeConn();
+        //this.closeConn();
     }
 
     //Methods
@@ -64,9 +69,25 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
         }
     }
 
+    //Select
+    public void execSelect(String _sql){
+        try{
+            Statement stm = conn.createStatement();
+            ResultSet rs = stm.executeQuery(_sql);
+
+            if(rs.next()){
+                System.out.println("Result menu: " + rs.getString(2));
+            }
+        }catch(Exception e){
+            Log.e("Error al ejecutar select: " , "" + e);
+        }
+    }
+
     //Constructors
-    public ConnSqlServer(String _connUrl){
+    public ConnSqlServer(String _connUrl , int _tipo , String _sql){
         this.connUrl = _connUrl;
         this.conn = null;
+        this.tipo = _tipo;
+        this.sql = _sql;
     }
 }

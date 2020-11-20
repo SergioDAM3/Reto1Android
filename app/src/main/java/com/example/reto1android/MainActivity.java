@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected String user = "admin";
     protected String passwd = "Admin1234";
     protected String SqlServerConnUrl = "jdbc:jtds:sqlserver://"+this.server+":"+this.port+";databaseName="+this.db+";instance="+this.instance+";user="+this.user+";password="+this.passwd+"";
+    protected ConnSqlServer admin = null;
 
 
     //AsyncTask de
@@ -28,11 +29,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
 
     public void execAsyncTask(View view){
-        new ConnSqlServer(this.SqlServerConnUrl).execute();
+        admin = (ConnSqlServer) new ConnSqlServer(this.SqlServerConnUrl , 1 , "select * from menus where id_menu = 1").execute();
+        admin.execSelect("select * from menus where id_menu = 1");
+        admin.closeConn();
+        //admin = null;
     }
 }
