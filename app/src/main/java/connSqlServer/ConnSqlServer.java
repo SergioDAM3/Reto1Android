@@ -13,24 +13,35 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
     //Attributes
     protected String connUrl;
     protected Connection conn;
-    protected int tipo;
+    protected int tipo; //0-UpdateBD/1-Select
     protected String sql;
 
     //Overrided Methods
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.openConn();
     }
     @Override
     protected String doInBackground(Integer... integers) {
-        //this.execSelect();
+        this.openConn();
+
+        //Dependiendo del tipo,ejecutamos una acción u otra
+        switch(this.tipo){
+            case 0:
+                //Actualizar BD con SQL Server
+                break;
+            case 1:
+                //Hacer select
+                this.execSelect(this.sql);
+                break;
+        }
+
+        this.closeConn();
         return "2";
     }
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        //this.closeConn();
     }
 
     //Methods
@@ -89,5 +100,11 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
         this.conn = null;
         this.tipo = _tipo;
         this.sql = _sql;
+    }
+    public ConnSqlServer(String _connUrl , int _tipo){
+        this.connUrl = _connUrl;
+        this.conn = null;
+        this.tipo = _tipo;
+        this.sql = "";
     }
 }

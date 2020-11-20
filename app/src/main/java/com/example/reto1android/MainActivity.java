@@ -3,23 +3,19 @@ package com.example.reto1android;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
-import java.sql.Connection;
-
+import connSQLite.SQLiteOpenHelper;
 import connSqlServer.ConnSqlServer;
+import funcionesGenerales.FuncionesGenerales;
 
 public class MainActivity extends AppCompatActivity {
     //Attribs
-    protected String server = "10.0.2.2";
-    protected String port = "1433";
-    protected String db = "PruebaAndroid";
-    protected String instance = "JHERRERO-P\\JAVISQL";
-    protected String user = "admin";
-    protected String passwd = "Admin1234";
-    protected String SqlServerConnUrl = "jdbc:jtds:sqlserver://"+this.server+":"+this.port+";databaseName="+this.db+";instance="+this.instance+";user="+this.user+";password="+this.passwd+"";
-    protected ConnSqlServer admin = null;
+    protected String SqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "PruebaAndroid" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
+    protected ConnSqlServer adminSQLServer = null;
+
+    //Generamos SQLite
+    SQLiteOpenHelper adminSQLite = new SQLiteOpenHelper(this, "somo", null, 1);
 
 
     //AsyncTask de
@@ -32,9 +28,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void execAsyncTask(View view){
-        admin = (ConnSqlServer) new ConnSqlServer(this.SqlServerConnUrl , 1 , "select * from menus where id_menu = 1").execute();
-        admin.execSelect("select * from menus where id_menu = 1");
-        admin.closeConn();
-        //admin = null;
+        adminSQLServer = (ConnSqlServer) new ConnSqlServer(this.SqlServerConnUrl , 1 , "select * from menus where id_menu = 1").execute();
+        //admin.execSelect("select * from menus where id_menu = 1");
+        //admin.closeConn();
+        adminSQLServer = null;
+    }
+
+    public void toast(View view){
+        System.out.println("HOLA");
     }
 }
