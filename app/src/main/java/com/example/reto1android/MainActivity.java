@@ -2,6 +2,7 @@ package com.example.reto1android;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 
@@ -15,16 +16,15 @@ public class MainActivity extends AppCompatActivity {
     protected ConnSqlServer adminSQLServer = null;
 
     //Generamos SQLite
-    SQLiteOpenHelper adminSQLite = new SQLiteOpenHelper(this, "somo", null, 1);
-
-
-    //AsyncTask de
-    //ConnSqlServer admin = new ConnSqlServer(this.SqlServerConnUrl);
+    SQLiteOpenHelper adminSQLite = new SQLiteOpenHelper(this, "pda", null, 1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Creamos la cinexión a la db
+        SQLiteDatabase db = adminSQLite.getWritableDatabase();
     }
 
     public void execAsyncTask(View view){
