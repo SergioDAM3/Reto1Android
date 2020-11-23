@@ -24,15 +24,14 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper i
         db.execSQL("create table proveedores(id_prov integer primary key autoincrement , nombre text not null)");
         //Incidencias Proveedores
         db.execSQL("create table incidencias_proveedores(id_inci integer primary key autoincrement , id_prov integer not null , descripcion text not null , tipo integer  not null, fecha_hora datetime , foreign key (id_prov) references proveedores(id_prov))");
-        //Clientes
-        db.execSQL("create table clientes(id_cliente integer primary key autoincrement , nombre text not null , correo text not null , telefono text  not null, visitas integer)");
         //Reg_caja
         db.execSQL("create table reg_caja(id_reg integer primary key autoincrement , descripcion text not null , fecha datetime not null , cantidad_total numeric(10,2) not null , tipo integer not null , cantidad_cambio numeric(10,2) not null)");
         //Pedidos
         db.execSQL("create table pedidos(id_pedido integer primary key autoincrement , fecha_pedido datetime not null , id_dispositivo integer not null , coste_total numeric(10,2) not null , id_reg_caja integer not null , foreign key (id_reg_caja) references reg_caja(id_reg))");
         //LineaPedidos
         db.execSQL("create table linea_pedidos(id_linped integer primary key autoincrement , id_producto integer not null , id_pedido integer not null , coste numeric(10,2) not null , cantidad integer not null , foreign key(id_producto) references productos(id_producto) , foreign key (id_pedido) references pedidos(id_pedido))");
-
+        //Clientes
+        db.execSQL("create table clientes(id_cliente integer primary key autoincrement , nombre text not null , correo text not null , telefono varchar not null , visitas integer not null)");
     }
 
     //Se ejecuta para actualizar
