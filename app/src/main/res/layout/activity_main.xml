@@ -173,6 +173,7 @@
                     android:width="0dp"
                     android:background="@drawable/btn_login_design"
                     android:fontFamily="@font/poppins_medium"
+                    android:onClick="entrarApp"
                     android:text="ENTRAR"
                     android:textColor="#263039"
                     android:textSize="24sp" />
