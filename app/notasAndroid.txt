@@ -1,0 +1,3 @@
+Login Background: Color Fondo: #263039 (38,48,57)
+Login Background: Color Sol: #ef3d4d (239,61,77)
+Login Background: Color Palmera: #71987d (113,152,125)

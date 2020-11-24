@@ -8,11 +8,12 @@ import android.view.View;
 
 import connSQLite.SQLiteOpenHelper;
 import connSqlServer.ConnSqlServer;
-import funcionesGenerales.FuncionesGenerales;
+import funcionesJava.FuncionesDB;
+import funcionesJava.FuncionesGenerales;
 
 public class MainActivity extends AppCompatActivity {
     //Attribs
-    protected String SqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "PruebaAndroid" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
+    protected String sqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "PruebaAndroid" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
     protected ConnSqlServer adminSQLServer = null;
 
     //Generamos SQLite
@@ -23,18 +24,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Creamos la cinexión a la db
+        //Creamos la cinexión a la db SQLite
         SQLiteDatabase db = adminSQLite.getWritableDatabase();
+
+        //Actualizamos SQLite con la base de datos SQL Server central mediante un AsyncTask
+        FuncionesDB.execAsyncTask(adminSQLServer , sqlServerConnUrl);
     }
 
-    public void execAsyncTask(View view){
-        adminSQLServer = (ConnSqlServer) new ConnSqlServer(this.SqlServerConnUrl , 1 , "select * from menus where id_menu = 1").execute();
-        //admin.execSelect("select * from menus where id_menu = 1");
-        //admin.closeConn();
-        adminSQLServer = null;
-    }
-
-    public void toast(View view){
-        System.out.println("HOLA");
+    //Función para salir de la aplicación
+    public void salirApp(View view){
+        finish();
+        System.out.println("El usuario Sale de la aplicación");
+        System.exit(0);
     }
 }

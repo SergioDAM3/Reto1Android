@@ -4,30 +4,180 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_login"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/prueba"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="75dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="execAsyncTask"
-            android:text="Exec AsyncTask" />
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="toast"
-            android:text="Button" />
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:text="JSSIF"
+            android:textColor="#FFFFFF"
+            android:textSize="40sp" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="95dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/etIdEmp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:width="0dp"
+                    android:background="@drawable/edit_text_design"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="Id Empleado"
+                    android:inputType="textPersonName"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#000"
+                    android:textSize="22sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/etHueco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:width="0dp"
+                    android:background="@drawable/edit_text_design"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="ID EMPLEADO"
+                    android:inputType="textPersonName"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#000"
+                    android:textSize="18sp"
+                    android:visibility="invisible" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/etPasswd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:width="0dp"
+                    android:background="@drawable/edit_text_design"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="Contraseña"
+                    android:inputType="textPersonName"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#000"
+                    android:textSize="22sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/etHueco2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:width="0dp"
+                    android:background="@drawable/edit_text_design"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="ID EMPLEADO"
+                    android:inputType="textPersonName"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#000"
+                    android:textSize="18sp"
+                    android:visibility="invisible" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
+
+                <Switch
+                    android:id="@+id/swRecuerdame"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:width="0dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="right"
+                    android:text="Recuérdame"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/btnSalir"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:background="@drawable/btn_login_design"
+                    android:fontFamily="@font/poppins_medium"
+                    android:onClick="salirApp"
+                    android:text="SALIR"
+                    android:textColor="#263039"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/btnEntrar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:background="@drawable/btn_login_design"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="ENTRAR"
+                    android:textColor="#263039"
+                    android:textSize="24sp" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

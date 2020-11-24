@@ -32,6 +32,13 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper i
         db.execSQL("create table linea_pedidos(id_linped integer primary key autoincrement , id_producto integer not null , id_pedido integer not null , coste numeric(10,2) not null , cantidad integer not null , foreign key(id_producto) references productos(id_producto) , foreign key (id_pedido) references pedidos(id_pedido))");
         //Clientes
         db.execSQL("create table clientes(id_cliente integer primary key autoincrement , nombre text not null , correo text not null , telefono varchar not null , visitas integer not null)");
+        //Empleados
+        db.execSQL("create table empleados(id_empleado integer primary key autoincrement , nom text not null , ape text not null , permiso_chat integer not null , id_jefe integer)");
+        //Dispositivos
+        db.execSQL("create table dispositivos(id_dispositivo integer primary key autoincrement , disponible integer not null , ip text not null)");
+        //rel_disp_empl
+        db.execSQL("create table rel_disp_emp(id_rel integer primary key autoincrement , id_dispositivo integer not null , id_empleado integer not null , h_inicio datetime , h_fin datetime)");
+
     }
 
     //Se ejecuta para actualizar
