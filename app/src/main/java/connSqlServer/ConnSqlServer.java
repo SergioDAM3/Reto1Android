@@ -150,7 +150,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
         return null;
     }
 
-    //Sacar el nombre de las columnas de la tabla especificada
+    //Sacar el nombre de las columnas de la tabla especificada (SQL Server)
     protected String[] execGetColumnNames(String _tableName){
         try{
             Statement stm = conn.createStatement();
@@ -175,7 +175,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
         return null;
     }
 
-    //Insert
+    //Insert Simple
     public void execInsertSqlServer(String _sql){
         try{
             // create a Statement from the connection
@@ -187,13 +187,113 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
             Log.e("Error al ejecutar insert: " , e.getMessage());
         }
     }
+    //Insert múltiple
+    public void execInsertMultipleSqlServer(String _nomTabla , String[] _nomCols , String[][] _valReg , int[] _tipo){
+        try{
+            // create a Statement from the connection
+            Statement statement = conn.createStatement();
+
+            //Sacamos el número de registros a introducir
+            int cantReg = _valReg.length ;
+
+            //Creamos la variable con la sentencia Insert
+            String sql;
+
+            for(int i = 0 ; i<cantReg ; i++){
+                //Hacemos una insert por cada registro
+                sql = "insert into " + _nomTabla + " (";
+
+                //Metemos las columnas
+                for(int j = 0 ; j < _nomCols.length ; j++){
+                    if(j != 0){
+                        sql += _nomCols[j];
+                        if(j != _nomCols.length - 1){
+                            sql += ",";
+                        }
+                    }
+                }
+                sql += ") values (";
+
+                //Metemos los registros
+                for(int k = 0 ; k < _nomCols.length ; k++){
+                    if(k != 0){
+                        //Miramos si el registro tiene que ir entre comillas simples
+                        switch (_tipo[k]){
+                            case 1:
+                                //si es un int
+                                break;
+                            case 3:
+                                //Si es varchar o date
+                                sql += "'";
+                                break;
+                            default:
+                        }
+
+                        sql += _valReg[i][k];
+
+                        switch (_tipo[k]){
+                            case 1:
+                                //si es un int
+                                break;
+                            case 3:
+                                //Si es varchar o date
+                                sql += "'";
+                                break;
+                            default:
+                        }
+                        if(k != _nomCols.length - 1){
+                            sql += ",";
+                        }
+                    }
+                }
+                sql += ");";
+
+                System.out.println("SQL INSERT: " + sql);
+
+                // insert the data
+                statement.executeUpdate(sql);
+            }
+        }catch(Exception e){
+            Log.e("Error al ejecutar insert" , e.getMessage());
+        }
+    }
+
+    //Insertar tabla a SQL Server
+    protected boolean insertarTablaSqlServer(String _nomTabla){
+        try{
+            String[] nomCols;
+            String[][] valReg;
+            int[] tipoCols;
+            //Sacamos el nombre de las columnas de la DB
+            nomCols = FuncionesDB.sacarNomCols(this.dbSQLite , _nomTabla); //Comprobado que funciona
+
+            //Sacamos los datos
+            valReg = FuncionesDB.sacarValReg(this.dbSQLite , _nomTabla);
+
+            //Sacamos el tipo de las columnas
+            tipoCols = FuncionesDB.sacarTipoCols(this.dbSQLite , _nomTabla);
+
+            //Ejecutamos la insert
+            this.execInsertMultipleSqlServer(_nomTabla , nomCols , valReg , tipoCols);
+
+            nomCols = null;
+            valReg = null;
+            tipoCols = null;
+
+            return true;
+
+        }catch (Exception e){
+            return false;
+        }
+    }
 
     //actualizarSQLServer
     protected void actualizarSqlServer(){
         //Actualizar BD SQL Server con SQLite
         //No Implementado
         try{
-            this.execInsertSqlServer("insert into menus (nombre, activo) values ('Menú del Día2' , 1)");
+            //Sacamos la información de la base de datos
+            this.insertarTablaSqlServer("productos");
         }catch(Exception e){
             Log.e("Error a la hora de actualizar la BD SQL Server con los datos de SQLite: " , e.getMessage());
         }
