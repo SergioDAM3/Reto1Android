@@ -38,6 +38,12 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper i
         db.execSQL("create table dispositivos(id_disp integer primary key autoincrement , disponible integer not null , ip text not null)");
         //rel_disp_empl
         db.execSQL("create table rel_disp_emp(id_rel integer primary key autoincrement , h_inicio datetime , h_fin datetime , id_dispositivo integer not null , id_emp integer not null , foreign key (id_dispositivo) references dispositivos(id_disp) , foreign key (id_emp) references empleados(id_emp))");
+
+        //TABLAS DE PDA
+        //tabla infoDevice
+        db.execSQL("create table thisDeviceInfo(id_disp integer primary key , idEmpRecordado integer)");
+        //Nos asignamos una id de device
+        db.execSQL("insert into thisDeviceInfo (id_disp , idEmpRecordado) values (1 , null)");
     }
 
     //Se ejecuta para actualizar

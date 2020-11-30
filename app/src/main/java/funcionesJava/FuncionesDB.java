@@ -26,10 +26,16 @@ public class FuncionesDB {
 
     //Función para actualizar SQLite con SQL Server
     //TODAVÍA NO IMPLEMENTADO
-    public static void actualizarSQLite(ConnSqlServer adminSQLServer , String _sqlServerConnUrl , SQLiteDatabase _db){
-        //Ejecutamos el AsyncTask para recoger la información
-        adminSQLServer = (ConnSqlServer) new ConnSqlServer(_sqlServerConnUrl , 1 , _db).execute();
-        adminSQLServer = null;
+    public static boolean actualizarSQLite(ConnSqlServer adminSQLServer , String _sqlServerConnUrl , SQLiteDatabase _db){
+        try{
+            //Ejecutamos el AsyncTask para recoger la información
+            adminSQLServer = (ConnSqlServer) new ConnSqlServer(_sqlServerConnUrl , 1 , _db).execute();
+            adminSQLServer = null;
+            return true;
+        }catch (Exception e){
+            Log.e("Error al actualizar SQLite" , e.getMessage());
+            return false;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////-

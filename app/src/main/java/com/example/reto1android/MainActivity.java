@@ -2,14 +2,21 @@ package com.example.reto1android;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Trace;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import activities.Inicio;
 import connSQLite.SQLiteOpenHelper;
 import connSqlServer.ConnSqlServer;
 import funcionesJava.FuncionesDB;
@@ -17,11 +24,13 @@ import funcionesJava.FuncionesGenerales;
 
 public class MainActivity extends AppCompatActivity {
     //Attribs
-    EditText etNom;
+    EditText etIdEmp;
     EditText etPasswd;
     Switch swRecuerdame;
+    static TextView tvMsgCargandoDB;
+    static Button btnEntrar;
 
-    //DB Stuff
+    //DB sQL SERVER Stuff
     protected String sqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "Restaurante" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
     protected ConnSqlServer adminSQLServer = null;
 
@@ -34,15 +43,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Definimos los elementos
-        etNom =(EditText)findViewById(R.id.etIdEmp);
+        etIdEmp =(EditText)findViewById(R.id.etIdEmp);
         etPasswd =(EditText)findViewById(R.id.etPasswd);
         swRecuerdame =(Switch) findViewById(R.id.swRecuerdame);
+        btnEntrar = (Button)findViewById(R.id.btnEntrar);
+        tvMsgCargandoDB = (TextView)findViewById(R.id.tvMsgCargandoDB);
 
         //Creamos la conexión a la db SQLite
         SQLiteDatabase db = adminSQLite.getWritableDatabase();
 
         //Actualizamos SQLite con la base de datos SQL Server central mediante un AsyncTask
-        //FuncionesDB.actualizarSQLite(adminSQLServer , sqlServerConnUrl , db);
+        FuncionesDB.actualizarSQLite(adminSQLServer , sqlServerConnUrl , db);
+
+        //Mstramos el Id Empleado recordado
+        Cursor filaDeviceInfo = db.rawQuery("select idEmpRecordado from thisDeviceInfo", null);
+        filaDeviceInfo.moveToFirst();
+        filaDeviceInfo.getCount();
+        if(filaDeviceInfo.getCount() != 0 && filaDeviceInfo.getString(0) != ""){
+            etIdEmp.setText(filaDeviceInfo.getString(0));
+        }else{
+        }
     }
 
     public void tempActualizarSqlServer(View view){
@@ -60,8 +80,56 @@ public class MainActivity extends AppCompatActivity {
 
     //Función para entrar en la Aplicacion
     public void entrarApp(View view){
-        if(swRecuerdame.isChecked()){
-            System.out.println("HOLA");
+        //Creamos la conexión a la db SQLite
+        SQLiteDatabase db = adminSQLite.getWritableDatabase();
+
+        //Comprobamos que el idEmp y la Contraseña son correctos
+        Cursor fila = db.rawQuery("select id_emp , password , permiso_chat from empleados order by id_emp asc", null);
+        fila.moveToFirst();
+
+        //Variable de control
+        boolean encontrado = false;
+
+        do{
+            //System.out.println("1-" + this.etIdEmp.getText().toString() + "-" + fila.getString(0));
+            //System.out.println("2-" + this.etPasswd.getText().toString() + "-" + fila.getString(1));
+
+            if((this.etIdEmp.getText().toString().equals(fila.getString(0))) && (this.etPasswd.getText().toString().equals(fila.getString(1)))){
+                //Marcamos que lo hemos encontrado
+                encontrado = true;
+
+                if(this.swRecuerdame.isChecked()){
+
+                    System.out.println("Usuario encontrado. Recuérdame:ON");
+                    try {
+                        //Hacemos la update en la BD
+                        ContentValues registroUpdate = new ContentValues();
+                        registroUpdate.put("idEmpRecordado", this.etIdEmp.getText().toString());
+                        db.update("thisDeviceInfo", registroUpdate, "", null);
+                    }catch (Exception e){
+                        Log.e("Error al actualizar la ID del Empleado recordado" , e.getMessage());
+                    }
+                }else{
+                    System.out.println("Usuario encontrado. Recuérdame:OFF");
+                    //Hacemos la update en la BD
+                    ContentValues registroUpdate = new ContentValues();
+                    registroUpdate.put("idEmpRecordado", "");
+                    db.update("thisDeviceInfo", registroUpdate, "", null);
+                }
+
+                //Vamos a la página Inicio
+                Intent i = new Intent(this, Inicio.class );
+                //i.putExtra("nombre", et1.getText().toString());
+                startActivity(i);
+
+                break;
+            }
+        }while(fila.moveToNext());
+
+        if(encontrado != true){
+            Toast.makeText(this , "Usuario no encontrado." , Toast.LENGTH_LONG).show();
+            System.out.println("Usuario no encontrado." );
+            this.etPasswd.setText("");
         }
     }
 
@@ -81,5 +149,14 @@ public class MainActivity extends AppCompatActivity {
 
         //Cerramos app con exit status 0
         System.exit(0);
+    }
+
+    //Para habilitar btnEnabled
+    public static void SQLiteActualizado(boolean result){
+        if(result){
+            tvMsgCargandoDB.setText("Datos recibidos correctamente.");
+            btnEntrar.setVisibility(View.VISIBLE);
+            btnEntrar.setEnabled(true);
+        }
     }
 }

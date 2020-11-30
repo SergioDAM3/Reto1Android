@@ -1,14 +1,18 @@
 package connSqlServer;
 
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.reto1android.MainActivity;
 
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -18,7 +22,7 @@ import java.sql.Statement;
 import connSQLite.SQLiteOpenHelper;
 import funcionesJava.FuncionesDB;
 
-public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
+public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
     //Attributes
     protected String connUrl;
     protected Connection conn;
@@ -26,13 +30,15 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
     protected String sql;
     protected  SQLiteDatabase dbSQLite;
 
+    boolean SQLiteActualizado = false;
+
     //Overrided Methods
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
     @Override
-    protected String doInBackground(Integer... integers) {
+    protected Integer doInBackground(Integer... integers) {
         //Abrimos conexion
         this.openConn();
 
@@ -42,7 +48,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
                 this.actualizarSqlServer();
                 break;
             case 1:
-                this.actualizarSQLite();
+                SQLiteActualizado = this.actualizarSQLite();
                 break;
             case 2:
                 //Hacer select
@@ -52,11 +58,26 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
 
         //Cerramos conexion
         this.closeConn();
-        return "2";
+        return 2;
     }
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(Integer s) {
         super.onPostExecute(s);
+
+        //Dependiendo del tipo,ejecutamos una acción u otra
+        switch(this.tipo){
+            case 0:
+                //Actualizar SQL Server
+                break;
+            case 1:
+                //Actualizar SQLite
+                //Una vez actualizada, habilitamos el botón de entrada
+                MainActivity.SQLiteActualizado(SQLiteActualizado);
+                break;
+            case 2:
+                //Hacer select
+                break;
+        }
     }
 
     //Methods
@@ -294,6 +315,9 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
         try{
             //Sacamos la información de la base de datos
             this.insertarTablaSqlServer("productos");
+
+            //Limpiamos SQLite
+            this.dbSQLite.execSQL("delete from productos");
         }catch(Exception e){
             Log.e("Error a la hora de actualizar la BD SQL Server con los datos de SQLite: " , e.getMessage());
         }
@@ -323,7 +347,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
     }
 
     //actualizarSQLite
-    protected void actualizarSQLite(){
+    protected boolean actualizarSQLite(){
         //Actualizar BD SQLite con SQL Server
         try{
             System.out.println("Actualizamos bd SQLite ....");
@@ -354,8 +378,11 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , String> {
             this.actualizarTablaSQLite("rel_disp_emp");
 
             System.out.println("Tablas actualizadas correctamente.\nBD SQLite actualizada correctamente.");
+
+            return true;
         }catch(Exception e){
             Log.e("Error a la hora de actualizar la BD SQLite con los datos de SQL Server: " , e.getMessage());
+            return false;
         }
     }
 
