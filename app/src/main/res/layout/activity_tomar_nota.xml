@@ -78,7 +78,30 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:onClick="actualizarPlatos"
             android:text="SELEC" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linLytSelectedMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/linLytMenu">
+
+        <TextView
+            android:id="@+id/lblMenuSelec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="X"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -89,8 +112,9 @@
         android:background="@color/bgPalmeraColor"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:weightSum="5"
-        app:layout_constraintTop_toBottomOf="@+id/linLytMenu">
+        app:layout_constraintTop_toBottomOf="@+id/linLytSelectedMenu">
 
         <TextView
             android:id="@+id/lblPlato1"
@@ -114,7 +138,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SELEC" />
+            android:onClick="seleccionarPlato"
+            android:text="SELEC1" />
     </LinearLayout>
 
     <LinearLayout
@@ -125,6 +150,7 @@
         android:background="@color/bgPalmeraColor"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -152,18 +178,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SELEC" />
+            android:onClick="seleccionarPlato"
+            android:text="SELEC2" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linLytPostre"
+        android:id="@+id/linLytPlato3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@color/bgPalmeraColor"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="invisible"
         android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -191,7 +219,111 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="SELEC" />
+            android:onClick="seleccionarPlato"
+            android:text="SELEC3" />
     </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/tblLytResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/linLytPlato3">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/lblResultPlt1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lblResultPlt2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lblResultPlt3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/lblSumPrecioTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0.0€"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnAnadir"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_default_design"
+                    android:onClick="anadirACesta"
+                    android:text="AÑADIR" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/lblHueco1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnIrCesta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:background="@drawable/btn_default_design"
+                android:onClick="irCesta"
+                android:text="Ir a Cesta" />
+
+            <TextView
+                android:id="@+id/lblHueco2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

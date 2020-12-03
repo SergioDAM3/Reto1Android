@@ -117,9 +117,11 @@ public class MainActivity extends AppCompatActivity {
                     db.update("thisDeviceInfo", registroUpdate, "", null);
                 }
 
+                //Cerramos la activity de Login
+                finish();
+
                 //Vamos a la página Inicio
                 Intent i = new Intent(this, Inicio.class );
-                //i.putExtra("nombre", et1.getText().toString());
                 startActivity(i);
 
                 break;

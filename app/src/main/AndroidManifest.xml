@@ -13,7 +13,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name="activities.MiHistorial"></activity>
+        <activity android:name="activities.Cesta"></activity>
+        <activity android:name="activities.MiHistorial" />
         <activity android:name="activities.TomarNota" />
         <activity android:name="activities.Inicio" />
         <activity android:name=".MainActivity">

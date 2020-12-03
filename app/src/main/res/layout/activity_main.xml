@@ -99,6 +99,7 @@
                     android:gravity="center"
                     android:hint="Contraseña"
                     android:inputType="textPersonName"
+                    android:password="true"
                     android:textColor="#000000"
                     android:textColorHint="#000"
                     android:textSize="22sp" />

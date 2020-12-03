@@ -16,7 +16,7 @@ import funcionesJava.FuncionesGenerales;
 
 public class Inicio extends AppCompatActivity {
 
-
+    static Inicio activityInicio;
 
     //DB SQL SERVER Stuff
     protected String sqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "Restaurante" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
@@ -32,6 +32,8 @@ public class Inicio extends AppCompatActivity {
 
         //Creamos la conexión a la db SQLite
         SQLiteDatabase db = adminSQLite.getWritableDatabase();
+
+        activityInicio = this;
     }
 
     //Función para ir a la activity de tomar nota
@@ -65,5 +67,9 @@ public class Inicio extends AppCompatActivity {
 
         //Cerramos app con exit status 0
         System.exit(0);
+    }
+
+    public static Inicio getInstance(){
+        return   activityInicio;
     }
 }

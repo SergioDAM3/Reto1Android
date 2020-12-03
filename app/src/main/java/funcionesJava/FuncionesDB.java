@@ -124,6 +124,69 @@ public class FuncionesDB {
         }
         return null;
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////-
+
+    //Funciones para actualizar los spinners de platos en tomar nota, devuelve un string con la info de los platos
+    public static String[] sacarPlatosMenu(int _idMenu , int _tipoPlato , SQLiteOpenHelper _adminDb){
+        //Creamos la conexión a la db SQLite
+        SQLiteDatabase db = _adminDb.getWritableDatabase();
+
+        //ejecutamos la sentencia
+        Cursor filaMenuSelec = db.rawQuery("select p.nombre , p.p_v_p from productos p join cat_prod cp on (p.id_categoria = cp.id_categoria) where p.id_menu = " + _idMenu + " and cp.tipo= " +  _tipoPlato+ " order by nombre asc", null);
+        filaMenuSelec.moveToFirst();
+        int cantPlatos = filaMenuSelec.getCount();
+        String[] dev = new String[cantPlatos];
+        if (cantPlatos > 0){
+            dev = new String[cantPlatos];
+            dev[0] = filaMenuSelec.getString(0) + ", " + filaMenuSelec.getString(1) + "EUR";
+            for(int i = 1 ; i < cantPlatos ; i ++){
+                filaMenuSelec.moveToNext();
+                dev[i] = filaMenuSelec.getString(0) + ", " + filaMenuSelec.getString(1) + "EUR";
+            }
+        }else{
+            dev = new String[]{"No hay platos asignados a este menú."};
+        }
+
+        return dev;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////-
+
+    //Función para devolver el id de un plato según su nombre, tipo y menú
+    public static int sacarIdPlato(int _idMenu , int _tipoPlato , String _nomPlato , SQLiteOpenHelper _adminDb){
+        int dev;
+        //Creamos la conexión a la db SQLite
+        SQLiteDatabase db = _adminDb.getWritableDatabase();
+
+        //ejecutamos la sentencia
+        Cursor filaPlatoSelec = db.rawQuery("select p.id_prod from productos p join cat_prod cp on (p.id_categoria = cp.id_categoria) where p.id_menu = "+_idMenu+" and  cp.tipo = "+_tipoPlato+" and nombre = '"+_nomPlato+"'", null);
+        filaPlatoSelec.moveToFirst();
+        dev = Integer.parseInt(filaPlatoSelec.getString(0));
+
+        return dev;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////-
+
+    //Función para saber la cantidad de productos disponibles
+    public static int cantProdDisp(int _idProd , SQLiteOpenHelper _adminDb){
+        int dev;
+        //Creamos la conexión a la db SQLite
+        SQLiteDatabase db = _adminDb.getWritableDatabase();
+
+        try {
+            //ejecutamos la sentencia
+            Cursor filaCantProd = db.rawQuery("select cant_total from productos where id_prod  = "+_idProd, null);
+            filaCantProd.moveToFirst();
+            dev = Integer.parseInt(filaCantProd.getString(0));
+
+            return dev;
+        }catch (Exception e){
+            Log.e("Errora al sacar la cantidad de productos totales" , e.getMessage());
+        }
+        return -1;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////-
+
 }
