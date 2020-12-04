@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -67,6 +68,46 @@ public class Inicio extends AppCompatActivity {
 
         //Cerramos app con exit status 0
         System.exit(0);
+    }
+
+    //Funcion para abrir la url de twitter
+    public void twitterLink(View view){
+        String url = "https://www.twitter.com/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    //Funcion para abrir la url de youtube
+    public void youtubeLink(View view){
+        String url = "https://www.youtube.com/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    //Funcion para abrir la url de instagram
+    public void instagramLink(View view){
+        String url = "https://www.instagram.com/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    //Funcion para abrir la url de facebook
+    public void facebookLink(View view){
+        String url = "https://www.facebook.com/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    //Funcion para abrir la url de facebook
+    public void mapsLink(View view){
+        String url = "https://www.google.com/maps/@43.3214803,-3.1256713,700m";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     public static Inicio getInstance(){
