@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     static Button btnEntrar;
 
     //DB sQL SERVER Stuff
-    protected String sqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("192.168.43.15" , "1433" , "Restaurante" , "DESKTOP-MHOH6P7\\SQLEXPRES" , "admin" , "Admin1234");
+    public static String sqlServerConnUrl = FuncionesGenerales.cadConnSqlServer("10.0.2.2" , "1433" , "Restaurante" , "JHERRERO-P\\JAVISQL" , "admin" , "Admin1234");
     protected ConnSqlServer adminSQLServer = null;
 
     //Generamos SQLite

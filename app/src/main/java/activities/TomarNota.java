@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.reto1android.R;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import connSQLite.SQLiteOpenHelper;
 import funcionesJava.FuncionesDB;
@@ -103,6 +104,11 @@ public class TomarNota extends AppCompatActivity {
         ArrayAdapter<String> adaptadorSpMenus = new ArrayAdapter<String>(this , android.R.layout.simple_spinner_item , infoMenus);
         adaptadorSpMenus.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spMenus.setAdapter(adaptadorSpMenus);
+
+        //Limpiamos tablas lineaPedidos, pedidos y reg_caja
+        db.execSQL("delete from linea_pedidos");
+        db.execSQL("delete from pedidos");
+        db.execSQL("delete from reg_caja");
     }
 
     public void actualizarPlatos(View view){
@@ -200,19 +206,33 @@ public class TomarNota extends AppCompatActivity {
 
         int idPedido = -1;
 
-        LocalDate fechaHoy = null;
+        LocalDateTime fechaHoy = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            fechaHoy = LocalDate.now();
+            fechaHoy = LocalDateTime.now();
         }
 
         try{
             //Comprobamos que haya un pedido creado, en caso contrario, creamos uno nuevo
             Cursor filaPedidos = db.rawQuery("select id_pedido from pedidos", null);
-            System.out.println("Buscamos el últipo medido: select id_pedido from pedidos");
+            filaPedidos.moveToFirst();
+            System.out.println("Buscamos el últipo medido: select id_pedido from pedidos:" + filaPedidos.getCount());
             if (filaPedidos.getCount() > 0){
                 //Sacamos la info del pedido
-                filaPedidos.moveToFirst();
                 idPedido = filaPedidos.getInt(0);
+
+                //Buscamos registro de caja
+                int idCaja;
+                Cursor filaCajas = db.rawQuery("select id_reg from reg_caja",null);
+                if(filaCajas.getCount() > 0){
+                    filaCajas.moveToLast();
+                    idCaja = filaCajas.getInt(0);
+                    System.out.println("Insertamos caja: insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',1,1,"+this.costoTotal+")");
+                }else{
+                    db.execSQL("insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',-1,1,"+this.costoTotal+")");
+                    System.out.println("Insertamos caja: insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',1,1,"+this.costoTotal+")");
+                    idCaja = 1;
+                }
+
             }else {
                 //Sacamos la id del dispositivo actual
                 Cursor filaIdDisp = db.rawQuery("select id_disp from thisDeviceInfo", null);
@@ -225,6 +245,7 @@ public class TomarNota extends AppCompatActivity {
                 if(filaCajas.getCount() > 0){
                     filaCajas.moveToLast();
                     idCaja = filaCajas.getInt(0);
+                    System.out.println("Insertamos caja: insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',1,1,"+this.costoTotal+")");
                 }else{
                     db.execSQL("insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',-1,1,"+this.costoTotal+")");
                     System.out.println("Insertamos caja: insert into reg_caja (id_reg , descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values (1,'Pedido Cliente','"+fechaHoy+"',1,1,"+this.costoTotal+")");

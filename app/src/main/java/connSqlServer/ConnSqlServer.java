@@ -3,6 +3,7 @@ package connSqlServer;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.StrictMode;
@@ -53,6 +54,9 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             case 2:
                 //Hacer select
                 this.execSelect(this.sql);
+                break;
+            case 3:
+                this.actualizarCesta();
                 break;
         }
 
@@ -308,12 +312,42 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
         }
     }
 
+    //Insertar tabla a SQL Server sin la primera col
+    //NO IMPLEMENTADO!!!!!
+    protected boolean insertarTablaSqlServerNoId(String _nomTabla){
+        try{
+            String[] nomCols;
+            String[][] valReg;
+            int[] tipoCols;
+            //Sacamos el nombre de las columnas de la DB
+            nomCols = FuncionesDB.sacarNomCols(this.dbSQLite , _nomTabla); //Comprobado que funciona
+
+            //Sacamos los datos
+            valReg = FuncionesDB.sacarValReg(this.dbSQLite , _nomTabla);
+
+            //Sacamos el tipo de las columnas
+            tipoCols = FuncionesDB.sacarTipoCols(this.dbSQLite , _nomTabla);
+
+            //Ejecutamos la insert
+            this.execInsertMultipleSqlServer(_nomTabla , nomCols , valReg , tipoCols);
+
+            nomCols = null;
+            valReg = null;
+            tipoCols = null;
+
+            return true;
+
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     //actualizarSQLServer
     protected void actualizarSqlServer(){
         //Actualizar BD SQL Server con SQLite
         //No Implementado
         try{
-            //Sacamos la información de la base de datos
+            //Sacamos la información de la base de datos y la subimos
             this.insertarTablaSqlServer("productos");
 
             //Limpiamos SQLite
@@ -369,7 +403,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             this.actualizarTablaSQLite("productos");
             this.actualizarTablaSQLite("proveedores");
             this.actualizarTablaSQLite("incidencias_proveedores");
-            this.actualizarTablaSQLite("reg_caja");
+            //this.actualizarTablaSQLite("reg_caja");
             this.actualizarTablaSQLite("pedidos");
             this.actualizarTablaSQLite("linea_pedidos");
             this.actualizarTablaSQLite("clientes");
@@ -384,6 +418,53 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             Log.e("Error a la hora de actualizar la BD SQLite con los datos de SQL Server: " , e.getMessage());
             return false;
         }
+    }
+
+    //actualizarSQLServer
+    protected void actualizarCesta(){
+        //Actualizar BD SQL Server con SQLite
+        //No Implementado
+        //falta el try/catch
+
+            //Creamos nuevo registro de caja en SQL Server
+            //Sacamos la info no relevante de SQLite
+            Cursor filaRegCaja = dbSQLite.rawQuery("select descripcion , fecha , cantidad_total , tipo , cantidad_cambio from reg_caja limit 1" , null);
+            filaRegCaja.moveToFirst();
+            //Sacamos la cantidad total que va a haber después del cambio
+            String[][] cantTotalCaja = this.execSelectMultiple("select top 1 cantidad_total from reg_caja order by fecha desc");
+            double cantTotalCajaActual = Double.valueOf(cantTotalCaja[0][0]) + Double.valueOf(filaRegCaja.getString(4));
+            //Hacemos la insert con los datos obtenidos
+            System.out.println("Exec insert en RegCaja SQLSERVER: " + "insert into reg_caja (descripcion , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaRegCaja.getString(4)+")");
+            this.execInsertSqlServer("insert into reg_caja (descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaRegCaja.getString(4)+")");
+
+            //Sacamos la id del último registro de caja
+            String[][] idUltRegCaja = this.execSelectMultiple("select top 1 id_reg from reg_caja order by id_reg desc");
+
+            //Actualizamos la id_reg de pedidos
+            this.dbSQLite.execSQL("update pedidos set id_reg = " + idUltRegCaja[0][0]);
+
+            //Sacamos la información de la base de datos y la subimos
+            this.insertarTablaSqlServer("pedidos");
+
+            //sacamos la id del pedido insertado
+            String[][] idUltPedido = this.execSelectMultiple("select top 1 id_pedido from pedidos order by id_pedido desc");
+
+            //Actualizamos la FK de linea_pedidos(SQLite)
+            this.dbSQLite.execSQL("update linea_pedidos set id_pedido = " + idUltPedido[0][0]);
+
+            String[] colsPedidos = new String[]{"fecha_pedido" , "costo_total" , "id_disp" , "id_reg"};
+            String[][] valRegPedidos = new String[1][1];
+            int[] tipoPedidos = new int[]{3,1,1,1}; //1 int 3 varchar
+            System.out.println("HOLA");
+            this.execInsertMultipleSqlServer("pedidos" , colsPedidos , valRegPedidos , tipoPedidos );
+            System.out.println("HOLA2");
+            System.out.println("Insert pedido correcto");
+
+            //this.insertarTablaSqlServer("linea_pedidos");
+
+            //Limpiamos SQLite
+            this.dbSQLite.execSQL("delete from linea_pedidos");
+            this.dbSQLite.execSQL("delete from pedidos");
     }
 
     //Constructors
@@ -406,6 +487,13 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
         this.conn = null;
         this.tipo = _tipo;
         this.sql = "";
+        this.dbSQLite = _db;
+    }
+    public ConnSqlServer(String _connUrl , int _tipo , SQLiteDatabase _db , String _sql){
+        this.connUrl = _connUrl;
+        this.conn = null;
+        this.tipo = _tipo;
+        this.sql = _sql;
         this.dbSQLite = _db;
     }
 }

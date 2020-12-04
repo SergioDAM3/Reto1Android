@@ -25,7 +25,6 @@ public class FuncionesDB {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////-
 
     //Función para actualizar SQLite con SQL Server
-    //TODAVÍA NO IMPLEMENTADO
     public static boolean actualizarSQLite(ConnSqlServer adminSQLServer , String _sqlServerConnUrl , SQLiteDatabase _db){
         try{
             //Ejecutamos el AsyncTask para recoger la información
@@ -185,6 +184,21 @@ public class FuncionesDB {
             Log.e("Errora al sacar la cantidad de productos totales" , e.getMessage());
         }
         return -1;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////-
+
+    //Función para actualizar cesta a la hora de subir un pedido
+    public static boolean actualizarCesta(ConnSqlServer adminSQLServer , String _sqlServerConnUrl , SQLiteDatabase _db){
+        try{
+            //Ejecutamos el AsyncTask para recoger la información
+            adminSQLServer = (ConnSqlServer) new ConnSqlServer(_sqlServerConnUrl , 3 , _db).execute();
+            adminSQLServer = null;
+            return true;
+        }catch (Exception e){
+            Log.e("Error al actualizar SQLite" , e.getMessage());
+            return false;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////-

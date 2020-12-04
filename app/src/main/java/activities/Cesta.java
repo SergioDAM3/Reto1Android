@@ -12,11 +12,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.reto1android.MainActivity;
 import com.example.reto1android.R;
 
 import java.util.ArrayList;
 
 import connSQLite.SQLiteOpenHelper;
+import connSqlServer.ConnSqlServer;
+import funcionesJava.FuncionesDB;
+import funcionesJava.FuncionesGenerales;
 
 public class Cesta extends AppCompatActivity {
 
@@ -25,6 +29,11 @@ public class Cesta extends AppCompatActivity {
     //Creamos la variable tipo ListView
     private ListView listPlato1;
     TextView tvCostoTotal;
+
+
+    //DB SQL SERVER Stuff
+    public String sqlServerConnUrl = MainActivity.sqlServerConnUrl;
+    protected ConnSqlServer adminSQLServer = null;
 
     //Generamos SQLite
     connSQLite.SQLiteOpenHelper adminSQLite = new SQLiteOpenHelper(this, "pda", null, 1);
@@ -173,7 +182,11 @@ public class Cesta extends AppCompatActivity {
         }
     }
 
-    public  void actualizarCesta(View view){
+    public  void confirmarCesta(View view){
+        //Creamos la conexión a la db SQLite
+        SQLiteDatabase db = adminSQLite.getWritableDatabase();
 
+        //Subimos los registros de pedidos y lineapedidos a SQL Server
+        FuncionesDB.actualizarCesta(adminSQLServer , sqlServerConnUrl , db);
     }
 }
