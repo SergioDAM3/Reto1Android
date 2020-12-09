@@ -180,7 +180,8 @@
             android:background="@drawable/btn_default_design"
             android:text="CHAT"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible"/>
 
         <Button
             android:id="@+id/btnIndicencias"
