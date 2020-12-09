@@ -28,7 +28,8 @@ public class Cesta extends AppCompatActivity {
 
     //Creamos la variable tipo ListView
     private ListView listPlato1;
-    TextView tvCostoTotal;
+    private TextView tvCostoTotal;
+    private static TextView tvEstadoSubida;
 
 
     //DB SQL SERVER Stuff
@@ -51,6 +52,7 @@ public class Cesta extends AppCompatActivity {
         //Asignamos listas
         listPlato1 = findViewById(R.id.listPlato1);
         tvCostoTotal = findViewById(R.id.tvCostoTotal);
+        tvEstadoSubida = findViewById(R.id.tvEstadoSubida);
 
         //Actualizamos el costo total
         this.actualizarCostoTotal();
@@ -188,5 +190,14 @@ public class Cesta extends AppCompatActivity {
 
         //Subimos los registros de pedidos y lineapedidos a SQL Server
         FuncionesDB.actualizarCesta(adminSQLServer , sqlServerConnUrl , db);
+    }
+
+    public static void actualizandoCesta(boolean _result){
+        if(_result){
+            tvEstadoSubida.setVisibility(View.VISIBLE);
+            tvEstadoSubida.setText("Confirmando Cesta ...");
+        }else{
+            tvEstadoSubida.setText("Cesta confirmada correctamente.");
+        }
     }
 }

@@ -55,7 +55,8 @@
             android:background="@drawable/btn_default_design"
             android:text="Gestión Mesas"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <LinearLayout
@@ -189,7 +190,8 @@
             android:background="@drawable/btn_default_design"
             android:text="INCIDENCIAS"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/btnExit"

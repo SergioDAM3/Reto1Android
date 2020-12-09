@@ -44,6 +44,9 @@ public class SQLiteOpenHelper extends android.database.sqlite.SQLiteOpenHelper i
         db.execSQL("create table thisDeviceInfo(id_disp integer primary key , idEmpRecordado integer)");
         //Nos asignamos una id de device
         db.execSQL("insert into thisDeviceInfo (id_disp , idEmpRecordado) values (1 , null)");
+
+        //Tabla de miHistorial
+        db.execSQL("create table miHistorial(id_pedido integer primary key autoincrement , fecha_pedido datetime not null , costo_total numeric(10,2) not null , id_disp integer not null  , id_reg integer not null , foreign key (id_reg) references reg_caja(id_reg))");
     }
 
     //Se ejecuta para actualizar

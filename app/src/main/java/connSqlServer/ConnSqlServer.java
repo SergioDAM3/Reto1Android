@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
+import activities.Cesta;
 import connSQLite.SQLiteOpenHelper;
 import funcionesJava.FuncionesDB;
 
@@ -37,6 +38,24 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        //Dependiendo del tipo,ejecutamos una acción u otra
+        switch(this.tipo){
+            case 0:
+                //Actualizar SQL Server
+                break;
+            case 1:
+                //Actualizar SQLite
+                break;
+            case 2:
+                //Hacer select
+                break;
+            case 3:
+                //Actualizar Cesta
+                Cesta.actualizandoCesta(true);
+                break;
+        }
+
     }
     @Override
     protected Integer doInBackground(Integer... integers) {
@@ -56,6 +75,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
                 this.execSelect(this.sql);
                 break;
             case 3:
+                //actualizar Cesta
                 this.actualizarCesta();
                 break;
         }
@@ -80,6 +100,10 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
                 break;
             case 2:
                 //Hacer select
+                break;
+            case 3:
+                //actualizar Cesta
+                Cesta.actualizandoCesta(false);
                 break;
         }
     }
@@ -210,6 +234,76 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             statement.executeUpdate(_sql);
         }catch(Exception e){
             Log.e("Error al ejecutar insert: " , e.getMessage());
+        }
+    }
+    //Insert Simple II
+    public void execInsertSimpleSqlServer(String _nomTabla , String[] _nomCols , String[][] _valReg , int[] _tipo){
+        try{
+            // create a Statement from the connection
+            Statement statement = conn.createStatement();
+
+            //Sacamos el número de registros a introducir
+            int cantReg = _valReg.length ;
+
+            //Creamos la variable con la sentencia Insert
+            String sql;
+
+            for(int i = 0 ; i<1 ; i++){
+                //Hacemos una insert por cada registro
+                sql = "insert into " + _nomTabla + " (";
+
+                //Metemos las columnas
+                for(int j = 0 ; j < _nomCols.length ; j++){
+                    if(j != 0){
+                        sql += _nomCols[j];
+                        if(j != _nomCols.length - 1){
+                            sql += ",";
+                        }
+                    }
+                }
+                sql += ") values (";
+
+                //Metemos los registros
+                for(int k = 0 ; k < _nomCols.length ; k++){
+                    if(k != 0){
+                        //Miramos si el registro tiene que ir entre comillas simples
+                        switch (_tipo[k]){
+                            case 1:
+                                //si es un int
+                                break;
+                            case 3:
+                                //Si es varchar o date
+                                sql += "'";
+                                break;
+                            default:
+                        }
+
+                        sql += _valReg[i][k];
+
+                        switch (_tipo[k]){
+                            case 1:
+                                //si es un int
+                                break;
+                            case 3:
+                                //Si es varchar o date
+                                sql += "'";
+                                break;
+                            default:
+                        }
+                        if(k != _nomCols.length - 1){
+                            sql += ",";
+                        }
+                    }
+                }
+                sql += ");";
+
+                System.out.println("SQL INSERT: " + sql);
+
+                // insert the data
+                statement.executeUpdate(sql);
+            }
+        }catch(Exception e){
+            Log.e("Error al ejecutar insert" , e.getMessage());
         }
     }
     //Insert múltiple
@@ -357,6 +451,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
         }
     }
 
+    //Función para actualizar las tablas de SQLite con las de SQL Server
     protected void actualizarTablaSQLite(String _nomTabla){
         try{
             String[][] dataMenus = this.execSelectMultiple("select * from "+_nomTabla+";");
@@ -375,6 +470,30 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
                 this.dbSQLite.insert(_nomTabla, null, registro);
             }
             System.out.println("Tabla " + _nomTabla + " actualizada correctamente. (SQL Server -> SQLite)");
+        }catch(Exception e){
+            Log.e("Error a la hora de actualizar Tabla SQLite" , e.getMessage());
+        }
+    }
+
+    //Función para actualizar la tabla de historial con los pedidos del dispositivo
+    protected void actualizarMiHistorialSQLite(int _idDisp){
+        try{
+            String[][] dataMenus = this.execSelectMultiple("select * from pedidos where id_disp = " + _idDisp + ";");
+            String[] colNamesMenus = this.execGetColumnNames("pedidos");
+            //Preparamos la insert
+            ContentValues registro = new ContentValues();
+            for(int i = 0 ; i  < dataMenus.length ; i++){
+                //System.out.println("Fila: " + i);
+                for(int k = 0; k < dataMenus[0].length ; k++){
+                    //System.out.print(dataMenus[i][k] + " ");
+                    //System.out.println(colNamesMenus[k] + " -> " + dataMenus[i][k]);
+                    registro.put(colNamesMenus[k] , dataMenus[i][k]);
+                }
+                //System.out.println("");
+                //Ejecutamos la insert
+                this.dbSQLite.insert("miHistorial", null, registro);
+            }
+            System.out.println("Tabla " + "miHistorial" + " actualizada correctamente. (SQL Server -> SQLite)");
         }catch(Exception e){
             Log.e("Error a la hora de actualizar Tabla SQLite" , e.getMessage());
         }
@@ -411,6 +530,15 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             this.actualizarTablaSQLite("dispositivos");
             this.actualizarTablaSQLite("rel_disp_emp");
 
+            //Actualizamos tabla de mi historial
+            //Sacamos la id deldispositivo atual
+            Cursor filaIdDisp = dbSQLite.rawQuery("select id_disp from thisDeviceInfo limit 1" , null);
+            filaIdDisp.moveToFirst();
+            //Limpiamos historial
+            dbSQLite.execSQL("delete from miHistorial");
+            //Actualizamos historial
+            this.actualizarMiHistorialSQLite(filaIdDisp.getInt(0));
+
             System.out.println("Tablas actualizadas correctamente.\nBD SQLite actualizada correctamente.");
 
             return true;
@@ -423,19 +551,20 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
     //actualizarSQLServer
     protected void actualizarCesta(){
         //Actualizar BD SQL Server con SQLite
-        //No Implementado
-        //falta el try/catch
-
+        try{
             //Creamos nuevo registro de caja en SQL Server
             //Sacamos la info no relevante de SQLite
-            Cursor filaRegCaja = dbSQLite.rawQuery("select descripcion , fecha , cantidad_total , tipo , cantidad_cambio from reg_caja limit 1" , null);
+            Cursor filaRegCaja = dbSQLite.rawQuery("select descripcion , fecha , cantidad_total , tipo , cantidad_cambio from reg_caja order by id_reg desc limit 1" , null);
             filaRegCaja.moveToFirst();
+            Cursor filaUltPedido = dbSQLite.rawQuery("select costo_total from pedidos order by id_pedido desc limit 1" , null);
+            filaUltPedido.moveToFirst();
             //Sacamos la cantidad total que va a haber después del cambio
             String[][] cantTotalCaja = this.execSelectMultiple("select top 1 cantidad_total from reg_caja order by fecha desc");
-            double cantTotalCajaActual = Double.valueOf(cantTotalCaja[0][0]) + Double.valueOf(filaRegCaja.getString(4));
+            System.out.println("A ver puto tonto, que tiene que haber como mínimo un registro en reg_caja (SQL Server), tonto que eres tonto");
+            double cantTotalCajaActual = Double.valueOf(cantTotalCaja[0][0]) + Double.valueOf(filaUltPedido.getString(0));
             //Hacemos la insert con los datos obtenidos
-            System.out.println("Exec insert en RegCaja SQLSERVER: " + "insert into reg_caja (descripcion , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaRegCaja.getString(4)+")");
-            this.execInsertSqlServer("insert into reg_caja (descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaRegCaja.getString(4)+")");
+            System.out.println("Exec insert en RegCaja SQLSERVER: " + "insert into reg_caja (descripcion , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaUltPedido.getString(0)+")");
+            this.execInsertSqlServer("insert into reg_caja (descripcion , fecha , cantidad_total , tipo , cantidad_cambio) values ('"+filaRegCaja.getString(0)+"','"+ filaRegCaja.getString(1)+"' , "+cantTotalCajaActual+" , 1 , "+ filaUltPedido.getString(0)+")");
 
             //Sacamos la id del último registro de caja
             String[][] idUltRegCaja = this.execSelectMultiple("select top 1 id_reg from reg_caja order by id_reg desc");
@@ -452,19 +581,34 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
             //Actualizamos la FK de linea_pedidos(SQLite)
             this.dbSQLite.execSQL("update linea_pedidos set id_pedido = " + idUltPedido[0][0]);
 
-            String[] colsPedidos = new String[]{"fecha_pedido" , "costo_total" , "id_disp" , "id_reg"};
-            String[][] valRegPedidos = new String[1][1];
-            int[] tipoPedidos = new int[]{3,1,1,1}; //1 int 3 varchar
-            System.out.println("HOLA");
-            this.execInsertMultipleSqlServer("pedidos" , colsPedidos , valRegPedidos , tipoPedidos );
-            System.out.println("HOLA2");
+            //Insertamos los pedidos
+            String[] colsPedidos =  FuncionesDB.sacarNomCols(this.dbSQLite , "pedidos"); //Comprobado que funciona
+            String[][] valRegPedidos = FuncionesDB.sacarValReg(this.dbSQLite , "pedidos");
+            int[] tipoPedidos = FuncionesDB.sacarTipoCols(this.dbSQLite , "pedidos");
+            //this.execInsertSimpleSqlServer("pedidos" , colsPedidos , valRegPedidos , tipoPedidos );
             System.out.println("Insert pedido correcto");
 
-            //this.insertarTablaSqlServer("linea_pedidos");
+            //Preparamos lin pedido
+            //Actualizamos id_pedido de linea_pedidos
+            this.dbSQLite.execSQL("update linea_pedidos set id_pedido = " + idUltPedido[0][0]);
+
+            //insertamos los linea_pedidos
+            String[] colsLinPedidos =  FuncionesDB.sacarNomCols(this.dbSQLite , "linea_pedidos"); //Comprobado que funciona
+            String[][] valRegLinPedidos = FuncionesDB.sacarValReg(this.dbSQLite , "linea_pedidos");
+            int[] tipoLinPedidos = FuncionesDB.sacarTipoCols(this.dbSQLite , "linea_pedidos");
+            this.execInsertMultipleSqlServer("linea_pedidos" , colsLinPedidos , valRegLinPedidos , tipoLinPedidos );
+            System.out.println("Insert linea_pedidos correcto");
 
             //Limpiamos SQLite
             this.dbSQLite.execSQL("delete from linea_pedidos");
             this.dbSQLite.execSQL("delete from pedidos");
+            this.dbSQLite.execSQL("delete from reg_caja");
+
+        }catch (Exception e){
+            Log.e("Error al actualizar cesta" , e.getMessage());
+        }
+
+
     }
 
     //Constructors

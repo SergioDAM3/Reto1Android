@@ -51,6 +51,7 @@ public class TomarNota extends AppCompatActivity {
     double[] precioProd = new double[3];
     int[] cantProd = new int[3];
     double costoTotal = 0;
+    double costoTotalTotal = 0;
 
     //Generamos SQLite
     SQLiteOpenHelper adminSQLite = new SQLiteOpenHelper(this, "pda", null, 1);
@@ -215,7 +216,7 @@ public class TomarNota extends AppCompatActivity {
             //Comprobamos que haya un pedido creado, en caso contrario, creamos uno nuevo
             Cursor filaPedidos = db.rawQuery("select id_pedido from pedidos", null);
             filaPedidos.moveToFirst();
-            System.out.println("Buscamos el últipo medido: select id_pedido from pedidos:" + filaPedidos.getCount());
+            System.out.println("Buscamos el últipo pedido: select id_pedido from pedidos:" + filaPedidos.getCount());
             if (filaPedidos.getCount() > 0){
                 //Sacamos la info del pedido
                 idPedido = filaPedidos.getInt(0);
@@ -268,6 +269,11 @@ public class TomarNota extends AppCompatActivity {
             db.execSQL("insert into linea_pedidos ( coste , cantidad , id_prod , id_pedido) values ("+precioProd[1]+",1,"+idPlatosSelected[1]+","+idPedido+")");
             //Plato 3
             db.execSQL("insert into linea_pedidos ( coste , cantidad , id_prod , id_pedido) values ("+precioProd[2]+",1,"+idPlatosSelected[2]+","+idPedido+")");
+
+            //Actualizamos el precio del pedido
+            this.costoTotalTotal = this.costoTotalTotal + this.costoTotal;
+            System.out.println("Actualizamos el precio del pedido a: " + this.costoTotalTotal);
+            db.execSQL("update pedidos set costo_total = " + this.costoTotalTotal);
 
             Toast.makeText(this , "Pedido añadido Correctamente." , Toast.LENGTH_SHORT).show();
 
