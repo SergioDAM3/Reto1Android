@@ -103,7 +103,7 @@ public class FuncionesDB {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////-
 
-    //Función sacamos los nombres de los campos de la tabla introducida por parámetros (SQLite)
+    //Función sacamos los valores de los registros de la tabla introducida por parámetros (SQLite)
     public static String[][] sacarValReg(SQLiteDatabase _db , String _nomTabla){
         try{
             Cursor fila = _db.rawQuery("select * from " + _nomTabla, null);

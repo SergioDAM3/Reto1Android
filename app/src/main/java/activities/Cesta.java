@@ -58,7 +58,9 @@ public class Cesta extends AppCompatActivity {
         this.actualizarCostoTotal();
 
         //Actualizamos listas
+        System.out.println("Actualizamso lista");
         this.actualizarListas();
+        System.out.println("Fin actualizar lista");
     }
 
     public Cesta getInstance(){
@@ -138,10 +140,10 @@ public class Cesta extends AppCompatActivity {
             contenidoPlato1.add("");
 
             //Preparamos los adaptadores
-            ArrayAdapter<String> adaptadorPlato1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contenidoPlato1);
+            ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, contenidoPlato1);
 
             //Asignamos los adaptadores a las listas
-            listPlato1.setAdapter(adaptadorPlato1);
+            listPlato1.setAdapter(adaptador);
 
         }catch (Exception e){
             Log.e("Error a la hora de actulizar listas" , e.getMessage());

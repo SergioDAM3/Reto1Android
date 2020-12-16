@@ -109,7 +109,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
     }
 
     //Methods
-    //Conecxión a la DB
+    //Conexión a la DB
     public void openConn(){
         if(this.conn != null){
             try{
@@ -611,7 +611,7 @@ public class ConnSqlServer extends AsyncTask<Integer , Integer , Integer> {
 
     }
 
-    //Constructors
+    //Constructores
     public ConnSqlServer(String _connUrl , int _tipo , String _sql){
         this.connUrl = _connUrl;
         this.conn = null;
